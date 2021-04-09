@@ -4,6 +4,7 @@ import com.google.code.kaptcha.Producer;
 import com.newcoder.community.entity.User;
 import com.newcoder.community.service.UserService;
 import com.newcoder.community.util.CommunityConstant;
+import com.newcoder.community.util.HostHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.swing.plaf.UIResource;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,6 +36,9 @@ public class LoginController implements CommunityConstant {
     @Autowired
     private Producer kaptchaProducer;
 
+    @Autowired
+    private HostHolder hostHolder;
+
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Value("${server.servlet.context-path}")
@@ -46,6 +51,8 @@ public class LoginController implements CommunityConstant {
 
     @RequestMapping(path = "/login", method = RequestMethod.GET)
     public String getLoginPage() {
+        User user= hostHolder.getUser();
+        System.out.println(user);
         return "/site/login";
     }
 

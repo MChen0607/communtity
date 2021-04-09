@@ -1,5 +1,6 @@
 package com.newcoder.community.controller;
 
+import com.newcoder.community.entity.LoginTicket;
 import com.newcoder.community.entity.User;
 import com.newcoder.community.service.UserService;
 import com.newcoder.community.util.CommunityUtil;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -107,5 +109,26 @@ public class UserController {
         } catch (IOException e) {
             logger.error("读取头像失败" + e.getMessage());
         }
+    }
+
+    @RequestMapping(path = "/updatePassword", method = RequestMethod.POST)
+    public String updateUserPassword(String oldPassword, String newPassword, String newPassword1, Model model,@CookieValue("ticket")String ticket) {
+
+        // 这个应该有前端进行判断
+        if (!newPassword.equals(newPassword1)) {
+            model.addAttribute("newPasswordMsg","两次输入的密码不一致");
+            return "site/setting";
+        }
+        User user = hostHolder.getUser();
+        if (!user.getPassword().equals(CommunityUtil.md5(oldPassword + user.getSalt()))) {
+            model.addAttribute("passwordMsg", "您输入的密码不正确");
+            return "site/setting";
+        }
+        userService.updatePassword(user.getId(), CommunityUtil.md5(newPassword + user.getSalt()));
+
+        //修改成功后需要注销登陆凭证
+        userService.logout(ticket);
+        return "redirect:/login";
+
     }
 }
