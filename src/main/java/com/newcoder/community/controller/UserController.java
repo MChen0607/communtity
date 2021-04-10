@@ -1,5 +1,6 @@
 package com.newcoder.community.controller;
 
+import com.newcoder.community.Annotation.LoginRequired;
 import com.newcoder.community.entity.LoginTicket;
 import com.newcoder.community.entity.User;
 import com.newcoder.community.service.UserService;
@@ -46,12 +47,14 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
+    @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getSettingPage() {
         return "/site/setting";
     }
 
 
+    @LoginRequired
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model) {
         if (headerImage == null) {
@@ -89,6 +92,7 @@ public class UserController {
         return "redirect:/index";
     }
 
+
     @RequestMapping(path = "/header/{fileName}", method = RequestMethod.GET)
     public void getHeader(@PathVariable("fileName") String filename, HttpServletResponse response) {
         // 服务器存放路径
@@ -111,10 +115,10 @@ public class UserController {
         }
     }
 
+    @LoginRequired
     @RequestMapping(path = "/updatePassword", method = RequestMethod.POST)
     public String updateUserPassword(String oldPassword, String newPassword, String newPassword1, Model model,@CookieValue("ticket")String ticket) {
-
-        // 这个应该有前端进行判断
+        // 这个应该由前端进行判断
         if (!newPassword.equals(newPassword1)) {
             model.addAttribute("newPasswordMsg","两次输入的密码不一致");
             return "site/setting";

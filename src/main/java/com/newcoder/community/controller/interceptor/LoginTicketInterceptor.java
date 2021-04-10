@@ -5,6 +5,8 @@ import com.newcoder.community.entity.User;
 import com.newcoder.community.service.UserService;
 import com.newcoder.community.util.CookieUtil;
 import com.newcoder.community.util.HostHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -16,6 +18,9 @@ import java.util.Date;
 
 @Component
 public class LoginTicketInterceptor implements HandlerInterceptor {
+
+    private static final Logger logger= LoggerFactory.getLogger(LoginTicketInterceptor.class);
+
     @Autowired
     private UserService userService;
 
@@ -52,6 +57,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        //logger.debug("测试什么时间说的话覅撒地方哈桑发哈是开发哈萨克发哈是的地方课件撒回复发");
         hostHolder.clear();
     }
 }

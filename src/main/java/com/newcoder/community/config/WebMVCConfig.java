@@ -1,6 +1,8 @@
 package com.newcoder.community.config;
 
+import com.newcoder.community.Annotation.LoginRequired;
 import com.newcoder.community.controller.interceptor.AlphaInterceptor;
+import com.newcoder.community.controller.interceptor.LoginRequiredInterceptor;
 import com.newcoder.community.controller.interceptor.LoginTicketInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +17,10 @@ public class WebMVCConfig implements WebMvcConfigurer {
 
     @Autowired
     private LoginTicketInterceptor loginTicketInterceptor;
+
+    @Autowired
+    private LoginRequiredInterceptor loginRequiredInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(alphaInterceptor)
@@ -23,5 +29,8 @@ public class WebMVCConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(loginTicketInterceptor)
                 .excludePathPatterns("/*/*.css","/*/*.js","/*/*.jpg","/*/*.jpeg","/*/*.png");
+
+        registry.addInterceptor(loginRequiredInterceptor)
+                .excludePathPatterns("/*/*.css","/*/*.js","/*/*.jpg","/*/*.jpeg","/*/*.png");//不处理这些静态资源
     }
 }
