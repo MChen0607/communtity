@@ -1,12 +1,16 @@
 package com.newcoder.community.controller;
 
+import com.newcoder.community.dao.DiscussPostMapper;
 import com.newcoder.community.entity.DiscussPost;
 import com.newcoder.community.entity.User;
 import com.newcoder.community.service.DiscussPostService;
+import com.newcoder.community.service.UserService;
 import com.newcoder.community.util.CommunityUtil;
 import com.newcoder.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,6 +26,8 @@ public class DiscussPostController {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
@@ -44,6 +50,19 @@ public class DiscussPostController {
 
         //报错的情况，将来统一处理
         return CommunityUtil.getJSONString(0, "发布成功!");
+    }
+
+    @RequestMapping(path = "/detail/{discussPostId}", method = RequestMethod.GET)
+    public String getDiscussPost(@PathVariable("discussPostId") int discussPostId, Model model) {
+        // 帖子
+        DiscussPost discussPost = discussPostService.findDiscussPostById(discussPostId);
+        model.addAttribute("discussPost", discussPost);
+        User user = userService.findUserById(discussPost.getUserId());
+        model.addAttribute("user", user);
+
+        //TODO 贴子下的评论
+        return "/site/discuss-detail";
+
     }
 
 }
