@@ -122,17 +122,17 @@ public class SensitiveFilter {
         return sb.toString();
     }
 
-    //判断是否为符号
+    // 判断是否为符号
     private boolean isSymbol(Character c) {
         // 0x2E80-0X9FFF 东亚文字范围
         return !CharUtils.isAsciiAlphanumeric(c) && (c < 0x2E80 || c > 0x9FFF);
     }
 
-    //定义前缀树
+    // 定义前缀树
     private static class TreeNode {
-        //关键词结束标识
+        // 关键词结束标识
         private boolean isKeywordEnd = false;
-        //子结点
+        // 子结点
         private Map<Character, TreeNode> subNodes = new HashMap<>();
 
         public boolean isKeywordEnd() {
@@ -143,12 +143,12 @@ public class SensitiveFilter {
             isKeywordEnd = keywordEnd;
         }
 
-        //添加子结点
+        // 添加子结点
         public void addSubNodes(Character c, TreeNode node) {
             subNodes.put(c, node);
         }
 
-        //或者子结点
+        // 获得子结点
         public TreeNode getSubNode(Character c) {
             return subNodes.get(c);
         }
