@@ -3,8 +3,10 @@ package com.newcoder.community.controller;
 import com.newcoder.community.Annotation.LoginRequired;
 import com.newcoder.community.entity.LoginTicket;
 import com.newcoder.community.entity.User;
+import com.newcoder.community.service.FollowService;
 import com.newcoder.community.service.LikeService;
 import com.newcoder.community.service.UserService;
+import com.newcoder.community.util.CommunityConstant;
 import com.newcoder.community.util.CommunityUtil;
 import com.newcoder.community.util.HostHolder;
 import netscape.security.PrivilegeTable;
@@ -29,7 +31,7 @@ import java.io.OutputStream;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController implements CommunityConstant {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -50,6 +52,9 @@ public class UserController {
 
     @Autowired
     private LikeService likeService;
+
+    @Autowired
+    private FollowService followService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -151,6 +156,19 @@ public class UserController {
         // 点赞数量
         int count = likeService.findUserLikeCount(userId);
         model.addAttribute("likeCount", count);
+
+        // 关注数量
+        long followeeCount = followService.findFolloweeCount(userId, ENTITY_USER);
+        model.addAttribute("followeeCount", followeeCount);
+        // 粉丝数量
+        long followerCount = followService.findFollowerCount(ENTITY_USER, userId);
+        model.addAttribute("followerCount", followerCount);
+        // 当前用户关注情况
+        boolean hasFollowed = false;
+        if (hostHolder.getUser() != null) {
+            hasFollowed = followService.hasFollowed(hostHolder.getUser().getId(), ENTITY_USER, userId);
+        }
+        model.addAttribute("hasFollowed", hasFollowed);
 
         return "site/profile";
     }
