@@ -2,6 +2,7 @@ package com.newcoder.community.controller;
 
 import com.newcoder.community.Annotation.LoginRequired;
 import com.newcoder.community.entity.LoginTicket;
+import com.newcoder.community.entity.Page;
 import com.newcoder.community.entity.User;
 import com.newcoder.community.service.FollowService;
 import com.newcoder.community.service.LikeService;
@@ -28,6 +29,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -172,4 +175,7 @@ public class UserController implements CommunityConstant {
 
         return "site/profile";
     }
+
+
+
 }
