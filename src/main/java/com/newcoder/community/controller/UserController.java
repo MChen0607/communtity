@@ -3,6 +3,7 @@ package com.newcoder.community.controller;
 import com.newcoder.community.Annotation.LoginRequired;
 import com.newcoder.community.entity.LoginTicket;
 import com.newcoder.community.entity.User;
+import com.newcoder.community.service.LikeService;
 import com.newcoder.community.service.UserService;
 import com.newcoder.community.util.CommunityUtil;
 import com.newcoder.community.util.HostHolder;
@@ -46,6 +47,9 @@ public class UserController {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -117,10 +121,10 @@ public class UserController {
 
     @LoginRequired
     @RequestMapping(path = "/updatePassword", method = RequestMethod.POST)
-    public String updateUserPassword(String oldPassword, String newPassword, String newPassword1, Model model,@CookieValue("ticket")String ticket) {
+    public String updateUserPassword(String oldPassword, String newPassword, String newPassword1, Model model, @CookieValue("ticket") String ticket) {
         // 这个应该由前端进行判断
         if (!newPassword.equals(newPassword1)) {
-            model.addAttribute("newPasswordMsg","两次输入的密码不一致");
+            model.addAttribute("newPasswordMsg", "两次输入的密码不一致");
             return "site/setting";
         }
         User user = hostHolder.getUser();
@@ -134,5 +138,20 @@ public class UserController {
         userService.logout(ticket);
         return "redirect:/login";
 
+    }
+
+    // 个人主页
+    @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在!");
+        }
+        model.addAttribute("user", user);
+        // 点赞数量
+        int count = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount", count);
+
+        return "site/profile";
     }
 }
