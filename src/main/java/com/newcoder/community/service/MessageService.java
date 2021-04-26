@@ -3,6 +3,7 @@ package com.newcoder.community.service;
 import com.newcoder.community.dao.MessageMapper;
 import com.newcoder.community.entity.Message;
 import com.newcoder.community.util.SensitiveFilter;
+import com.sun.mail.util.MailSSLSocketFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
@@ -55,4 +56,20 @@ public class MessageService {
         return messageMapper.updateStatus(ids, 1);
     }
 
+    public Message findLatestNotice(int userId, String topic) {
+        return messageMapper.selectLatestNotice(userId, topic);
+    }
+
+    public int findNoticeCount(int userId, String topic) {
+        return messageMapper.selectNoticeCount(userId, topic);
+    }
+
+    public int findNoticeUnreadCount(int userId, String topic) {
+        return messageMapper.selectNoticeUnreadCount(userId, topic);
+    }
+
+    // TODO 可按消息的状态进行排序
+    public List<Message> findNotices(int userId, String topic, int offset, int limit) {
+        return messageMapper.selectNotices(userId, topic, offset, limit);
+    }
 }
