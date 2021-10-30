@@ -33,6 +33,7 @@ public class UserService implements CommunityConstant {
     @Autowired
     private TemplateEngine templateEngine;
 
+
 //    @Autowired
 //    private LoginTicketMapper loginTicketMapper;
 
@@ -110,6 +111,40 @@ public class UserService implements CommunityConstant {
         String content = templateEngine.process("/mail/activation", context);
         mailClinet.sendMail(user.getEmail(), "激活账号", content);
         return map;
+    }
+
+    public Map<String, Object> verificationCode(String email) {
+        Map<String, Object> map = new HashMap<>();
+        if (StringUtils.isBlank(email)) {
+            map.put("emailMsg", "邮箱不能为空");
+            return map;
+        }
+        // 发送邮箱验证码
+        String verificationCode = CommunityUtil.generateUUID();
+        Context context = new Context();
+        context.setVariable("email", email);
+        context.setVariable("verificationCode", verificationCode);
+        String content = templateEngine.process("/mail/forget", context);
+        mailClinet.sendMail(email, "验证信息", content);
+
+        // 将验证码存储在redis中
+        String redisKey = RedisKeyUtil.getVerificationKey(email);
+        redisTemplate.opsForValue().set(redisKey, verificationCode);
+
+        return map;
+    }
+
+    /**
+     * 验证验证码是否正确
+     *
+     * @param email            用户邮箱
+     * @param verificationCode 用户输入的验证码
+     * @return 验证码是否一致
+     */
+    public boolean judgeVerificationCode(String email, String verificationCode) {
+        String redisKey = RedisKeyUtil.getVerificationKey(email);
+        String verificationInRedis = (String) redisTemplate.opsForValue().get(redisKey);
+        return verificationCode.equals(verificationInRedis);
     }
 
 
@@ -231,5 +266,12 @@ public class UserService implements CommunityConstant {
     private void clearUser(int userId) {
         String redisKey = RedisKeyUtil.getUserKey(userId);
         redisTemplate.delete(redisKey);
+    }
+
+    /**
+     * 根据邮箱获取User
+     */
+    public User getUserIdFromEmail(String email) {
+        return userMapper.selectByEmail(email);
     }
 }

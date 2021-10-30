@@ -14,6 +14,8 @@ public class RedisKeyUtil {
     private static final String PREFIX_KAPTCHA = "kaptcha";
     private static final String PREFIX_TICKET = "ticket";
     private static final String PREFIX_USER = "user";
+    private static final String PREFIX_VERIFICATION = "verification";
+
 
     // 某个实体的栈
     // like:entity:entituType:entityId->set(userId)
@@ -53,6 +55,11 @@ public class RedisKeyUtil {
     // 用户
     public static String getUserKey(int userId) {
         return PREFIX_USER + SPLIT + userId;
+    }
+
+    // 验证码信息
+    public static String getVerificationKey(String email) {
+        return PREFIX_VERIFICATION + SPLIT + email;
     }
 
 }

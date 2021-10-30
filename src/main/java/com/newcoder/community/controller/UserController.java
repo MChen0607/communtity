@@ -10,7 +10,7 @@ import com.newcoder.community.service.UserService;
 import com.newcoder.community.util.CommunityConstant;
 import com.newcoder.community.util.CommunityUtil;
 import com.newcoder.community.util.HostHolder;
-import netscape.security.PrivilegeTable;
+//import netscape.security.PrivilegeTable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -74,7 +71,8 @@ public class UserController implements CommunityConstant {
             return "site/setting";
         }
         String filename = headerImage.getOriginalFilename();
-        String suffix = filename.substring(filename.lastIndexOf("."));//从"."开始到结束
+        // 从"."开始到结束
+        String suffix = filename.substring(filename.lastIndexOf("."));
         if (StringUtils.isBlank(suffix)) {
             model.addAttribute("error", "文件的格式不正确");
             return "site/setting";
@@ -145,10 +143,28 @@ public class UserController implements CommunityConstant {
         //修改成功后需要注销登陆凭证
         userService.logout(ticket);
         return "redirect:/login";
-
     }
 
-    // 个人主页
+
+    @RequestMapping(path = "/forgetPassword", method = RequestMethod.POST)
+    public String forgetUserPassword(String email,String verificationCode, String newPassword,Model model) {
+        if (!userService.judgeVerificationCode(email, verificationCode)) {
+            model.addAttribute("verificationCodeMsg", "验证码输入不正确");
+            return "site/forget";
+        }
+        User user = userService.getUserIdFromEmail(email);
+        userService.updatePassword(user.getId(), CommunityUtil.md5(newPassword + user.getSalt()));
+        return "redirect:/login";
+    }
+
+
+    /**
+     * 个人主页
+     *
+     * @param userId
+     * @param model
+     * @return
+     */
     @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
     public String getProfilePage(@PathVariable("userId") int userId, Model model) {
         User user = userService.findUserById(userId);
@@ -175,7 +191,6 @@ public class UserController implements CommunityConstant {
 
         return "site/profile";
     }
-
 
 
 }

@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.Cookie;
@@ -43,13 +40,13 @@ public class LoginController implements CommunityConstant {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
-
-    @Autowired
-    private RedisTemplate redisTemplate;
 
 
     @RequestMapping(path = "/register", method = RequestMethod.GET)
@@ -99,27 +96,27 @@ public class LoginController implements CommunityConstant {
     }
 
 
-    //    @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
-//    public void getKaptcha(HttpServletResponse response, HttpSession session) {
-//        //生成验证码
-//        String text = kaptchaProducer.createText();
-//        BufferedImage image = kaptchaProducer.createImage(text);
-//
-//        //将验证码传入session
-//        session.setAttribute("kaptcha", text);
-//
-//        //将图片输出给浏览器
-//        response.setContentType("image/png");
-//        try {
-//            OutputStream os = response.getOutputStream();
-//            ImageIO.write(image, "png", os);
-//        } catch (IOException e) {
-//            logger.error("响应验证失败：" + e.getMessage());
-//            e.printStackTrace();
-//        }
-//    }
+/*    @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
+    public void getKaptcha(HttpServletResponse response, HttpSession session) {
+        //生成验证码
+        String text = kaptchaProducer.createText();
+        BufferedImage image = kaptchaProducer.createImage(text);
 
-    // 使用redis重构
+        //将验证码传入session
+        session.setAttribute("kaptcha", text);
+
+        //将图片输出给浏览器
+        response.setContentType("image/png");
+        try {
+            OutputStream os = response.getOutputStream();
+            ImageIO.write(image, "png", os);
+        } catch (IOException e) {
+            logger.error("响应验证失败：" + e.getMessage());
+            e.printStackTrace();
+        }
+    }*/
+
+
     @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
     public void getKaptcha(HttpServletResponse response) {
         //生成验证码
@@ -188,5 +185,28 @@ public class LoginController implements CommunityConstant {
         userService.logout(ticket);
         return "redirect:/login";
     }
+
+    @RequestMapping(path = "/forget", method = RequestMethod.GET)
+    public String forget() {
+        return "/site/forget";
+    }
+
+    /**
+     * 发送验证码给用户邮箱中并记录验证码信息
+     *
+     * @return
+     */
+    @RequestMapping(path = "/forget/sendVerificationCode", method = RequestMethod.POST)
+    @ResponseBody
+    public String sendVerificationCode(@RequestParam("email") String email) {
+        System.out.println(email);
+        // 发送验证码
+        Map<String, Object> map = userService.verificationCode(email);
+        if (map.isEmpty()) {
+            return CommunityUtil.getJSONString(0, "验证码已发送，请注意查收！");
+        }
+        return CommunityUtil.getJSONString(1, "添加失败", map);
+    }
+
 
 }
