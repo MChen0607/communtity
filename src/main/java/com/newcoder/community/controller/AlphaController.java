@@ -4,7 +4,7 @@ package com.newcoder.community.controller;
 import com.newcoder.community.dao.AlphaDao;
 import com.newcoder.community.service.AlphaService;
 import com.newcoder.community.util.CommunityUtil;
-import com.sun.deploy.net.HttpResponse;
+//import com.sun.deploy.net.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
