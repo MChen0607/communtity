@@ -2,10 +2,8 @@ package com.newcoder.community.controller;
 
 import com.newcoder.community.dao.CommentMapper;
 import com.newcoder.community.dao.DiscussPostMapper;
-import com.newcoder.community.entity.Comment;
-import com.newcoder.community.entity.DiscussPost;
-import com.newcoder.community.entity.Page;
-import com.newcoder.community.entity.User;
+import com.newcoder.community.entity.*;
+import com.newcoder.community.event.EventProducer;
 import com.newcoder.community.service.CommentService;
 import com.newcoder.community.service.DiscussPostService;
 import com.newcoder.community.service.LikeService;
@@ -41,6 +39,9 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private LikeService likeService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
     public String addDiscussPost(String title, String content) {
@@ -59,6 +60,14 @@ public class DiscussPostController implements CommunityConstant {
         //        discussPost.setStatus(0);
         //        discussPost.setType(0);
         discussPostService.addDiscussPost(discussPost);
+
+        // 触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityId(ENTITY_POST)
+                .setEntityId(discussPost.getId());
+        eventProducer.fireEvent(event);
 
         //报错的情况，将来统一处理
         return CommunityUtil.getJSONString(0, "发布成功!");
@@ -83,7 +92,8 @@ public class DiscussPostController implements CommunityConstant {
         //查评论的分页信息
         page.setLimit(5);
         page.setPath("/discuss/detail/" + discussPostId);
-        page.setRows(discussPost.getCommentCount());//从帖子中取评论的数目
+        //从帖子中取评论的数目
+        page.setRows(discussPost.getCommentCount());
 
         // 评论：给帖子评论
         // 回复：给评论回复

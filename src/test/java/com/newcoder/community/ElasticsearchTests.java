@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.newcoder.community.dao.DiscussPostMapper;
 import com.newcoder.community.dao.elasticsearch.DiscussPostRepository;
 import com.newcoder.community.entity.DiscussPost;
+import com.newcoder.community.service.ElasticsearchService;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -48,12 +49,14 @@ public class ElasticsearchTests {
 //    @Autowired
 //    private ElasticsearchTemplate elasticsearchTemplate;
 
-    @Autowired
-    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+//    @Autowired
+//    private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
-    @Qualifier("client")
     @Autowired
     private RestHighLevelClient restHighLevelClient;
+
+    @Autowired
+    private ElasticsearchService elasticsearchService;
 
     @Test
     public void testInsert() {
@@ -190,6 +193,13 @@ public class ElasticsearchTests {
     }
 
 
+    @Test
+    public void testService() throws IOException {
+        Page<DiscussPost> page = elasticsearchService.searchDiscussPost("互联网寒冬", 1, 10);
+        for (DiscussPost post : page) {
+            System.out.println(post);
+        }
+    }
 /*
 // es6.0版本代码
    @Test
