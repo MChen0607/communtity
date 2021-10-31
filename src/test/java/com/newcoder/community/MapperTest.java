@@ -10,7 +10,6 @@ import com.newcoder.community.entity.Message;
 import com.newcoder.community.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.webservices.client.WebServiceClientTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -18,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
-@ContextConfiguration(classes = CommuntityApplication.class)
+@ContextConfiguration(classes = CommunityApplication.class)
 public class MapperTest {
     @Autowired
     private UserMapper userMapper;

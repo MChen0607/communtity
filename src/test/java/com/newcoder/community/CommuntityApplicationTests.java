@@ -1,6 +1,5 @@
 package com.newcoder.community;
 
-import com.newcoder.community.config.AlphaConfig;
 import com.newcoder.community.dao.AlphaDao;
 import com.newcoder.community.service.AlphaService;
 import org.junit.jupiter.api.Test;
@@ -10,14 +9,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @SpringBootTest
-@ContextConfiguration(classes = CommuntityApplication.class)
+@ContextConfiguration(classes = CommunityApplication.class)
 class CommuntityApplicationTests implements ApplicationContextAware {
 
 //	@Test

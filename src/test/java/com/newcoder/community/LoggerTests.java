@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 
 @SpringBootTest
-@ContextConfiguration(classes = CommuntityApplication.class)
+@ContextConfiguration(classes = CommunityApplication.class)
 public class LoggerTests {
     private static final Logger logger = LoggerFactory.getLogger(LoggerTests.class);
 

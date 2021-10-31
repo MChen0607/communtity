@@ -1,7 +1,6 @@
 package com.newcoder.community;
 
 
-import com.newcoder.community.entity.Comment;
 import com.newcoder.community.service.AlphaService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
 @SpringBootTest
-@ContextConfiguration(classes = CommuntityApplication.class)
+@ContextConfiguration(classes = CommunityApplication.class)
 public class TransactionTests {
 
     @Autowired
