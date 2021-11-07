@@ -1,6 +1,5 @@
 package com.newcoder.community.config;
 
-import com.newcoder.community.Annotation.LoginRequired;
 import com.newcoder.community.controller.interceptor.AlphaInterceptor;
 import com.newcoder.community.controller.interceptor.LoginRequiredInterceptor;
 import com.newcoder.community.controller.interceptor.LoginTicketInterceptor;
@@ -19,8 +18,8 @@ public class WebMVCConfig implements WebMvcConfigurer {
     @Autowired
     private LoginTicketInterceptor loginTicketInterceptor;
 
-    @Autowired
-    private LoginRequiredInterceptor loginRequiredInterceptor;
+//    @Autowired
+//    private LoginRequiredInterceptor loginRequiredInterceptor;
 
     @Autowired
     private MessageInterceptor messageInterceptor;
@@ -34,8 +33,7 @@ public class WebMVCConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginTicketInterceptor)
                 .excludePathPatterns("/*/*.css", "/*/*.js", "/*/*.jpg", "/*/*.jpeg", "/*/*.png");
 
-        registry.addInterceptor(loginRequiredInterceptor)
-                .excludePathPatterns("/*/*.css", "/*/*.js", "/*/*.jpg", "/*/*.jpeg", "/*/*.png");//不处理这些静态资源
+        // registry.addInterceptor(loginRequiredInterceptor).excludePathPatterns("/*/*.css", "/*/*.js", "/*/*.jpg", "/*/*.jpeg", "/*/*.png");//不处理这些静态资源
 
         // 对所有请求都有效
         registry.addInterceptor(messageInterceptor)
