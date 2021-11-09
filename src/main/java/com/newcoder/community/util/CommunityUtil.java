@@ -42,6 +42,10 @@ public class CommunityUtil {
         return getJSONString(code,msg,null);
     }
 
+    public static String getJSONString(int code){
+        return getJSONString(code,null,null);
+    }
+
     public static void main(String[] args) {
         Map<String,Object> map=new HashMap<>();
         map.put("name","asdf");

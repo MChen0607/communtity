@@ -14,10 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import sun.security.krb5.internal.Ticket;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -219,10 +217,9 @@ public class UserService implements CommunityConstant {
     public void logout(String ticket) {
         String redisKey = RedisKeyUtil.getTicketKey(ticket);
         LoginTicket loginTicket = (LoginTicket) redisTemplate.opsForValue().get(redisKey);
-        if (loginTicket != null) {
-            loginTicket.setStatus(1);
-            redisTemplate.opsForValue().set(redisKey, loginTicket);
-        }
+        loginTicket.setStatus(1);
+        redisTemplate.opsForValue().set(redisKey, loginTicket);
+
 
     }
 
@@ -276,14 +273,15 @@ public class UserService implements CommunityConstant {
         return userMapper.selectByEmail(email);
     }
 
-    public Collection<? extends GrantedAuthority> getAuthorities(int userId){
+    public Collection<? extends GrantedAuthority> getAuthorities(int userId) {
         User user = this.findUserById(userId);
 
         List<GrantedAuthority> list = new ArrayList<>();
         list.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                switch(user.getType()){
+                System.out.println("admin");
+                switch (user.getType()) {
                     case 1:
                         return AUTHORITY_ADMIN;
                     case 2:
@@ -291,6 +289,7 @@ public class UserService implements CommunityConstant {
                     default:
                         return AUTHORITY_USER;
                 }
+
             }
         });
         return list;
