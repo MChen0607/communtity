@@ -82,7 +82,7 @@
         </filter>
     </appender>
 
-    <logger name="com.newcoder.community" level="debug"/>
+    <logger name="com.nowcoder.community" level="debug"/>
 
     <!--必须有这个root配置-->
     <root level="info">
