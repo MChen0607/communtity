@@ -9,7 +9,9 @@ import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
+import com.nowcoder.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +42,9 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private EventProducer eventProducer;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
     public String addDiscussPost(String title, String content) {
@@ -66,6 +71,10 @@ public class DiscussPostController implements CommunityConstant {
                 .setEntityId(ENTITY_POST)
                 .setEntityId(discussPost.getId());
         eventProducer.fireEvent(event);
+
+        // 计算帖子分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey, discussPost.getId());
 
         //报错的情况，将来统一处理
         return CommunityUtil.getJSONString(0, "发布成功!");
@@ -163,13 +172,14 @@ public class DiscussPostController implements CommunityConstant {
 
     /**
      * 置顶
+     *
      * @param id discussPost的id
      * @return json
      */
-    @RequestMapping(path = "/top",method = RequestMethod.POST)
+    @RequestMapping(path = "/top", method = RequestMethod.POST)
     @ResponseBody
-    public String setTop(int id){
-        discussPostService.updateType(id,1);
+    public String setTop(int id) {
+        discussPostService.updateType(id, 1);
 
         // 触发发帖事件
         Event event = new Event()
@@ -184,13 +194,14 @@ public class DiscussPostController implements CommunityConstant {
 
     /**
      * 加精
+     *
      * @param id discussPost的id
      * @return json
      */
-    @RequestMapping(path = "/wonderful",method = RequestMethod.POST)
+    @RequestMapping(path = "/wonderful", method = RequestMethod.POST)
     @ResponseBody
-    public String setWonderful(int id){
-        discussPostService.updateStatus(id,1);
+    public String setWonderful(int id) {
+        discussPostService.updateStatus(id, 1);
 
         // 触发发帖事件
         Event event = new Event()
@@ -200,18 +211,23 @@ public class DiscussPostController implements CommunityConstant {
                 .setEntityId(id);
         eventProducer.fireEvent(event);
 
+        // 计算帖子分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey, id);
+
         return CommunityUtil.getJSONString(0);
     }
 
     /**
      * 加精
+     *
      * @param id discussPost的id
      * @return json
      */
-    @RequestMapping(path = "/delete",method = RequestMethod.POST)
+    @RequestMapping(path = "/delete", method = RequestMethod.POST)
     @ResponseBody
-    public String setDelete(int id){
-        discussPostService.updateStatus(id,2);
+    public String setDelete(int id) {
+        discussPostService.updateStatus(id, 2);
 
         // 触发发帖事件
         Event event = new Event()

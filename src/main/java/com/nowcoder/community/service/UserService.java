@@ -278,7 +278,6 @@ public class UserService implements CommunityConstant {
         list.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                System.out.println("admin");
                 switch (user.getType()) {
                     case 1:
                         return AUTHORITY_ADMIN;

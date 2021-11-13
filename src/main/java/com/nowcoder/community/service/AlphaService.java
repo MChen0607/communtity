@@ -129,12 +129,12 @@ public class AlphaService {
      */
     @Async
     public void execute1(){
-        logger.debug("execute");
+        logger.debug("execute1");
     }
 
-    @Scheduled(initialDelay = 10000,fixedDelay = 1000)
+//    @Scheduled(initialDelay = 10000,fixedDelay = 1000)
     public void execute2(){
-        logger.debug("execute");
+        logger.debug("execute2");
     }
 
 }

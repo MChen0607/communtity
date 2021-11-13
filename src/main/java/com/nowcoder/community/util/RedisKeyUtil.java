@@ -10,6 +10,7 @@ public class RedisKeyUtil {
     private static final String PREFIX_TICKET = "ticket";
     private static final String PREFIX_USER = "user";
     private static final String PREFIX_VERIFICATION = "verification";
+    private static final String PREFIX_POST = "post";
     /**
      * unique visitor
      */
@@ -82,8 +83,8 @@ public class RedisKeyUtil {
     /**
      * 单日活跃用户
      */
-    public static String getDailyActiveUserKey(String date){
-        return PREFIX_DAU+SPLIT+date;
+    public static String getDailyActiveUserKey(String date) {
+        return PREFIX_DAU + SPLIT + date;
     }
 
     /**
@@ -91,5 +92,12 @@ public class RedisKeyUtil {
      */
     public static String getDailyActiveUserKey(String startDate, String endDate) {
         return PREFIX_DAU + SPLIT + startDate + SPLIT + endDate;
+    }
+
+    /**
+     * 帖子分数
+     */
+    public static String getPostScoreKey() {
+        return PREFIX_POST + SPLIT + "score";
     }
 }
