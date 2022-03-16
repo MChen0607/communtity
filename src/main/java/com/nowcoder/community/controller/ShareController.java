@@ -41,6 +41,12 @@ public class ShareController implements CommunityConstant {
     @Value("${wk.image.storage}")
     private String wkImageStorage;
 
+
+
+    @Value("${http://r8tv8j2gy.hd-bkt.clouddn.com}")
+    private String shareBucketUrl;
+
+
     @Autowired
     private EventProducer eventProducer;
 
@@ -54,20 +60,23 @@ public class ShareController implements CommunityConstant {
         Event event = new Event()
                 .setTopic(TOPIC_SHARE)
                 .setData("htmlUrl", htmlUrl)
-                .setData("fileName",fileName)
+                .setData("fileName", fileName)
                 .setData("suffix", ".png");
         eventProducer.fireEvent(event);
 
         // 返回访问路径
         Map<String, Object> map = new HashMap<>();
-        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
+        // map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
+        map.put("shareUrl", shareBucketUrl + "/" + fileName);
 
         return CommunityUtil.getJSONString(0, null, map);
     }
 
     /**
+     * Deprecated
      * 获取长图
      */
+    @Deprecated
     @RequestMapping(path = "/share/image/{fileName}", method = RequestMethod.GET)
     public void getShareImage(@PathVariable("fileName") String fileName, HttpServletResponse response) {
         if (StringUtils.isBlank(fileName)) {
@@ -81,7 +90,7 @@ public class ShareController implements CommunityConstant {
             byte[] buffer = new byte[1024];
             int b = 0;
             while ((b = fileInputStream.read(buffer)) != -1) {
-                outputStream.write(buffer,0,b);
+                outputStream.write(buffer, 0, b);
             }
         } catch (IOException e) {
             logger.error("获取长图失败: " + e.getMessage());
